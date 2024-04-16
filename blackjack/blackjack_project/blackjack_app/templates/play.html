@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Play Blackjack</title>
+    <style>
+      body {
+        padding: 20px;
+        margin: 0;
+        background-color: #327932;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .card {
+        width: 150px;
+        height: 200px;
+        border: 1px solid black;
+        margin: 10px;
+        display: inline-block;
+        padding: 5px;
+        text-align: center;
+        background-color: white;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        overflow: hidden;
+      }
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: inherit;
+        margin: 0;
+      }
+      button {
+        padding: 10px;
+        border: none;
+        color: rgb(5, 51, 5),
+        width: 200px;
+        font-size: 25px;
+        border-radius: 3px;
+        margin: 5px;
+      }
+      .btn-div {
+        display: flex;
+        padding-bottom: 10px;
+      }
+      .btn {
+        width: auto;
+      }
+      .score {
+        color: yellow;
+        font-size: 30px;
+        padding: 5px;
+        height: 30px;
+      }
+    </style>
+    <script>
+      // Check if the page is being refreshed
+      if (performance.navigation.type == 1) {
+        // Redirect to the first page
+        window.location.href = "{% url 'start_game' %}";
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Blackjack Game</h1>
+
+    <p class="score">Score: {{score}}</p>
+
+    <!-- Dealer's cards -->
+    <h2>Dealer's Hand:</h2>
+    <div>
+      {% for card in dealer.hand %}
+      <div class="card">
+        {% if forloop.counter == 2 and not is_player_done %}
+        <p>Hidden Card</p>
+        {% else %}
+        <p>{{ card.rank }} of {{card.suit}}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% if is_player_done %}
+    <h2>Total Value: {{dealer.value}}</h2>
+    {% endif %}
+
+    <!-- Player's cards -->
+    <h2>Player's Hand:</h2>
+    <div>
+      {% for card in player.hand %}
+      <div class="card">
+        <p>{{ card.rank }} of {{card.suit}}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <h2>Total Value: {{player.value}}</h2>
+
+    {% if result %}
+    <h1>{{ result }}</h1>
+    <form class="btn" action="{% url 'play_again' %}" method="get">
+      <button type="submit">Play Again</button>
+    </form>
+    {% else %}
+    <div class="btn-div">
+      <form class="btn" action="{% url 'draw_card' %}" method="get">
+        <button type="submit">Draw Card</button>
+      </form>
+      <form class="btn" action="{% url 'stand' %}" method="get">
+        <button type="submit">Stand</button>
+      </form>
+    </div>
+    {% endif %}
+  </body>
+</html>
